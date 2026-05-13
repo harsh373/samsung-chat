@@ -1,4 +1,4 @@
-// FILE: server/src/index.js
+
 
 import express from "express";
 import cors from "cors";
@@ -22,7 +22,7 @@ const client = new OpenAI({
 
 });
 
-// Fast + stable free model
+//model we can change
 const MODEL = "llama-3.3-70b-versatile";
 
 app.use(cors());
@@ -104,7 +104,7 @@ app.post("/api/chat", async (req, res) => {
           `Attempt ${attempt} failed`
         );
 
-        // Retry only on temporary errors
+       
         if (
           err.status !== 429 &&
           err.status !== 500 &&
@@ -115,14 +115,14 @@ app.post("/api/chat", async (req, res) => {
 
         }
 
-        // Final retry failed
+        
         if (attempt === 3) {
 
           throw err;
 
         }
 
-        // Wait before retry
+       
         await new Promise((resolve) =>
           setTimeout(resolve, 2000)
         );
@@ -140,7 +140,7 @@ app.post("/api/chat", async (req, res) => {
 
     }
 
-    // Send reply
+    
     res.json({
       reply,
     });

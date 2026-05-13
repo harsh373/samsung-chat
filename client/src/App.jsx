@@ -1,6 +1,3 @@
-// FILE: client/src/App.jsx
-// ONE JOB: Own all state. Coordinate between InputBar (user input) and ChatWindow (display).
-// Zero display logic lives here — App is the brain, the children are the face.
 
 import { useState } from "react";
 import ChatWindow from "./components/ChatWindow.jsx";
@@ -8,42 +5,36 @@ import InputBar from "./components/InputBar.jsx";
 import { sendMessage } from "./api/chatService.js";
 
 export default function App() {
-  // messages: the full conversation history — array of { role: "user"|"assistant", content: "..." }
-  // Every message ever sent or received lives in this one array.
+  
   const [messages, setMessages] = useState([]);
 
-  // loading: true while we're waiting for the LLM to respond
-  // Used to show the typing indicator and disable the input
   const [loading, setLoading] = useState(false);
 
-  // error: holds an error string if the API call fails, null otherwise
+  
   const [error, setError] = useState(null);
 
-  // handleSend is called by InputBar when the user submits a message
   async function handleSend(text) {
-    if (!text.trim()) return; // ignore empty or whitespace-only submissions
+    if (!text.trim()) return; 
 
-    // Build the new user message object
+   
     const userMessage = { role: "user", content: text };
 
-    // Add the user's message to state immediately — don't wait for the LLM
-    // updatedMessages is a local variable so we can pass the full history to the API
+    
     const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages); // triggers a re-render — user sees their message right away
+    setMessages(updatedMessages); 
 
-    setLoading(true);  // show the typing indicator
-    setError(null);    // clear any previous error
+    setLoading(true); 
+    setError(null);    
 
     try {
-      // sendMessage sends the FULL conversation history — LLM needs context to reply coherently
+      
       const reply = await sendMessage(updatedMessages);
 
-      // Add the assistant's reply to state — triggers another re-render
       setMessages([...updatedMessages, { role: "assistant", content: reply }]);
     } catch {
       setError("Failed to get a response. Is the server running?");
     } finally {
-      setLoading(false); // always stop loading, whether success or failure
+      setLoading(false); 
     }
   }
 
@@ -60,7 +51,7 @@ export default function App() {
     "
   >
 
-    {/* Main Chat Card */}
+    
     <div
       className="
         w-full
@@ -77,7 +68,7 @@ export default function App() {
       "
     >
 
-      {/* Header */}
+     
       <header
         className="
           bg-gray-900
@@ -91,7 +82,7 @@ export default function App() {
         "
       >
 
-        {/* Status Dot */}
+        
         <div
           className="
             w-3
@@ -101,7 +92,7 @@ export default function App() {
           "
         />
 
-        {/* Title */}
+       
         <div>
 
           <h1
@@ -128,7 +119,7 @@ export default function App() {
 
       </header>
 
-      {/* Error Banner */}
+      
       {error && (
 
         <div
@@ -147,13 +138,13 @@ export default function App() {
 
       )}
 
-      {/* Chat Area */}
+    
       <ChatWindow
         messages={messages}
         loading={loading}
       />
 
-      {/* Input */}
+      
       <InputBar
         onSend={handleSend}
         loading={loading}

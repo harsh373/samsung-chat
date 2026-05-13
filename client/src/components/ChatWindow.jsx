@@ -1,4 +1,3 @@
-// FILE: client/src/components/ChatWindow.jsx
 
 import { useEffect, useRef } from "react";
 
@@ -12,7 +11,7 @@ export default function ChatWindow({
 
   const bottomRef = useRef(null);
 
-  // Auto-scroll on new messages
+  
   useEffect(() => {
 
     bottomRef.current?.scrollIntoView({
@@ -102,10 +101,10 @@ export default function ChatWindow({
 
         ))}
 
-        {/* Typing animation */}
+        
         {loading && <TypingIndicator />}
 
-        {/* Scroll anchor */}
+        
         <div ref={bottomRef} />
 
       </div>
