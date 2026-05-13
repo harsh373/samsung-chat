@@ -1,5 +1,3 @@
-
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -13,23 +11,21 @@ const app = express();
 
 const PORT = process.env.PORT || 3001;
 
-// Groq client
+// Groq
 const client = new OpenAI({
-
   apiKey: process.env.GROQ_API_KEY,
-
   baseURL: "https://api.groq.com/openai/v1",
-
 });
 
-//model we can change
+// Model 
 const MODEL = "llama-3.3-70b-versatile";
+
 
 app.use(cors());
 
 app.use(express.json());
 
-// Health route
+
 app.get("/", (req, res) => {
 
   res.json({
@@ -45,7 +41,7 @@ app.post("/api/chat", async (req, res) => {
 
     const { messages } = req.body;
 
-    // Validation
+   
     if (!Array.isArray(messages)) {
 
       return res.status(400).json({
@@ -54,7 +50,7 @@ app.post("/api/chat", async (req, res) => {
 
     }
 
-    // Clean messages
+    
     const cleanedMessages = messages
       .filter(
         (m) =>
@@ -64,7 +60,16 @@ app.post("/api/chat", async (req, res) => {
       )
       .slice(-6);
 
-    // Final formatted messages
+    
+    if (cleanedMessages.length === 0) {
+
+      return res.status(400).json({
+        error: "No valid messages provided",
+      });
+
+    }
+
+   
     const formattedMessages = [
 
       {
@@ -78,7 +83,7 @@ app.post("/api/chat", async (req, res) => {
 
     let completion;
 
-    // Retry logic
+  
     for (let attempt = 1; attempt <= 3; attempt++) {
 
       try {
@@ -96,6 +101,7 @@ app.post("/api/chat", async (req, res) => {
 
           });
 
+       
         break;
 
       } catch (err) {
@@ -104,7 +110,7 @@ app.post("/api/chat", async (req, res) => {
           `Attempt ${attempt} failed`
         );
 
-       
+        
         if (
           err.status !== 429 &&
           err.status !== 500 &&
@@ -115,23 +121,26 @@ app.post("/api/chat", async (req, res) => {
 
         }
 
-        
+       
         if (attempt === 3) {
 
           throw err;
 
         }
 
-       
+        
         await new Promise((resolve) =>
           setTimeout(resolve, 2000)
         );
+
       }
     }
 
+    
     const reply =
       completion?.choices?.[0]?.message?.content;
 
+   
     if (!reply) {
 
       throw new Error(
@@ -159,10 +168,12 @@ app.post("/api/chat", async (req, res) => {
         "Internal server error",
 
     });
+
   }
+
 });
 
-// Start server
+
 app.listen(PORT, () => {
 
   console.log(
