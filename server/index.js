@@ -112,9 +112,9 @@ app.post("/api/chat", async (req, res) => {
 
         
         if (
-          err.status !== 429 &&
-          err.status !== 500 &&
-          err.status !== 503
+          err.status !== 429 &&  //rate limit
+          err.status !== 500 &&  //sever error
+          err.status !== 503     //sevice unavailable
         ) {
 
           throw err;
